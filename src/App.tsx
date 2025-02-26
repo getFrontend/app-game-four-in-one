@@ -1,4 +1,3 @@
-import './App.css';
 import ConnectFour from './components/ConnectFour';
 
 function App() {

@@ -6,7 +6,7 @@ const ConnectFour: React.FC = () => {
   const ROWS = 6;
   const COLS = 7;
   const EMPTY = null;
-  const PLAYER1 = 'blue';
+  const PLAYER1 = 'red';
   const PLAYER2 = 'yellow';
 
   const [board, setBoard] = useState<(string | null)[][]>(createEmptyBoard());
