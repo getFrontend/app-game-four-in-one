@@ -15,21 +15,21 @@ const Menu: React.FC<MenuProps> = ({ setGameMode }) => {
         
         <div className="flex flex-col space-y-4">
           <button 
-            className="bg-blue-500 text-white py-3 px-6 rounded-full font-medium hover:bg-blue-600 transition"
+            className="cursor-pointer bg-blue-500 text-white py-3 px-6 rounded-full font-medium hover:bg-blue-600 transition"
             onClick={() => setGameMode('1P')}
           >
             1 PLAYER (VS AI)
           </button>
           
           <button 
-            className="bg-gray-800 text-white py-3 px-6 rounded-full font-medium hover:bg-gray-900 transition"
+            className="cursor-pointer bg-yellow-500 text-white py-3 px-6 rounded-full font-medium hover:bg-yellow-600 transition"
             onClick={() => setGameMode('2P')}
           >
             2 PLAYERS
           </button>
           
           <button 
-            className="bg-purple-600 text-white py-3 px-6 rounded-full font-medium hover:bg-purple-700 transition"
+            className="cursor-pointer bg-purple-500 text-white py-3 px-6 rounded-full font-medium hover:bg-purple-600 transition"
             onClick={() => setGameMode('AI')}
           >
             AI VS AI
