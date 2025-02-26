@@ -8,7 +8,7 @@ interface CellProps {
   getAnimationStyle: (rowIdx: number, colIdx: number) => React.CSSProperties;
 }
 
-const Cell: React.FC<CellProps> = ({ rowIdx, colIdx, cell, handleColumnClick, getAnimationStyle }) => {
+const Cell: React.FC<CellProps> = ({ rowIdx, colIdx, handleColumnClick, getAnimationStyle }) => {
   return (
     <div 
       key={`${rowIdx}-${colIdx}`} 
