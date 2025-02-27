@@ -110,13 +110,11 @@ const ConnectFour: React.FC = () => {
     setGameOver(false);
     setDropAnimation({ active: false, col: null, row: null, player: null });
   };
-
   // Go back to menu
   const goToMenu = () => {
     resetGame();
     setGameMode(null);
   };
-
   // Check for win
   const checkWin = (board: (string | null)[][], row: number, col: number) => {
     const directions = [
@@ -160,7 +158,6 @@ const ConnectFour: React.FC = () => {
     
     return false;
   };
-
   // Calculate animation styles for dropping piece
   const getAnimationStyle = (rowIdx: number, colIdx: number): React.CSSProperties => {
     if (dropAnimation.active && colIdx === dropAnimation.col) {
@@ -311,6 +308,12 @@ const ConnectFour: React.FC = () => {
       return () => clearTimeout(timeout);
     }
   }, [currentPlayer, gameMode, gameOver, animating]);
+  // Update the setGameMode handling in Menu click
+  const handleGameModeSelect = (mode: string) => {
+    setGameMode(mode);
+    setCurrentPlayer(PLAYER1); // Always ensure human player (PLAYER1) goes first
+    setBoard(createEmptyBoard());
+  };
   return (
     <div className="min-h-screen bg-[#f7f7f7] p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
@@ -324,9 +327,10 @@ const ConnectFour: React.FC = () => {
             handleColumnClick={handleColumnClick}
             getAnimationStyle={getAnimationStyle}
             goToMenu={goToMenu}
+            gameMode={gameMode}
           />
         ) : (
-          <Menu setGameMode={setGameMode} />
+          <Menu setGameMode={handleGameModeSelect} />
         )}
       </div>
     </div>

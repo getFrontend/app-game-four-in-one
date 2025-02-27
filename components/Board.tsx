@@ -10,30 +10,40 @@ interface BoardProps {
   handleColumnClick: (colIdx: number) => void;
   getAnimationStyle: (rowIdx: number, colIdx: number) => React.CSSProperties;
   goToMenu: () => void;
+  gameMode: string | null;
 }
 
 const Board: React.FC<BoardProps> = ({ 
   board, 
   currentPlayer, 
-  winner, 
-  gameOver, 
-  animating, 
-  handleColumnClick, 
+  winner,
+  gameOver,
+  animating,
+  handleColumnClick,
   getAnimationStyle,
-  goToMenu 
+  goToMenu,
+  gameMode 
 }) => {
   const COLS = board[0].length;
   const EMPTY = null;
-  const PLAYER1 = 'red';
-
+  const PLAYER1 = 'yellow';
+  const getTurnText = () => {
+    if (gameMode === '1P') {
+      return currentPlayer === PLAYER1 ? "Your turn" : "AI's turn";
+    }
+    return `${currentPlayer === PLAYER1 ? 'Yellow' : 'Blue'}'s turn`;
+  };
+  
   return (
     <div className="flex flex-col items-center">
       <div className="text-2xl font-bold my-4">
         {winner ? 
-          `Player ${winner === PLAYER1 ? '1' : '2'} won!` : 
+          `${gameMode === '1P' ? 
+            (winner === PLAYER1 ? 'You' : 'AI') : 
+            (winner === PLAYER1 ? 'Yellow' : 'Blue')} won!` : 
           gameOver ? 
             "It's a draw!" : 
-            `${currentPlayer === PLAYER1 ? 'Player 1' : 'Player 2'}'s turn`
+            getTurnText()
         }
       </div>
       
