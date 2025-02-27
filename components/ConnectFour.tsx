@@ -188,31 +188,129 @@ const ConnectFour: React.FC = () => {
       transition: 'background-color 300ms',
     };
   };
-
-  // Simple AI implementation for 1-player mode
+  // Add evaluation function for board positions
+  const evaluateBoard = (board: (string | null)[][], player: string) => {
+    let score = 0;
+    
+    // Check horizontal, vertical, and diagonal lines
+    const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+    
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        for (const [dr, dc] of directions) {
+          let count = 0;
+          let empty = 0;
+          let opponent = 0;
+          
+          // Check four consecutive positions
+          for (let i = 0; i < 4; i++) {
+            const newR = r + dr * i;
+            const newC = c + dc * i;
+            
+            if (newR >= 0 && newR < ROWS && newC >= 0 && newC < COLS) {
+              if (board[newR][newC] === player) count++;
+              else if (board[newR][newC] === null) empty++;
+              else if (board[newR][newC] !== null) opponent++;
+            }
+          }
+          
+          // Score based on piece configurations
+          if (count === 4) score += 100000; // Winning position
+          else if (count === 3 && empty === 1) score += 1000; // Three in a row
+          else if (count === 2 && empty === 2) score += 100; // Two in a row
+          else if (opponent === 3 && empty === 1) score -= 900; // Block opponent's three
+        }
+      }
+    }
+    
+    // Prefer center columns
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (board[r][c] === player) {
+          score += Math.abs(COLS/2 - c) * -2; // Center control bonus
+        }
+      }
+    }
+    
+    return score;
+  };
+  // Minimax algorithm with alpha-beta pruning
+  const minimax = (board: (string | null)[][], depth: number, alpha: number, beta: number, maximizing: boolean): number => {
+    if (depth === 0) return evaluateBoard(board, PLAYER2);
+    
+    if (maximizing) {
+      let maxScore = -Infinity;
+      for (let c = 0; c < COLS; c++) {
+        if (board[0][c] === null) {
+          let r = ROWS - 1;
+          while (r >= 0 && board[r][c] !== null) r--;
+          if (r >= 0) {
+            board[r][c] = PLAYER2;
+            if (checkWin(board, r, c)) {
+              board[r][c] = null;
+              return 100000;
+            }
+            const score = minimax(board, depth - 1, alpha, beta, false);
+            board[r][c] = null;
+            maxScore = Math.max(maxScore, score);
+            alpha = Math.max(alpha, score);
+            if (beta <= alpha) break;
+          }
+        }
+      }
+      return maxScore;
+    } else {
+      let minScore = Infinity;
+      for (let c = 0; c < COLS; c++) {
+        if (board[0][c] === null) {
+          let r = ROWS - 1;
+          while (r >= 0 && board[r][c] !== null) r--;
+          if (r >= 0) {
+            board[r][c] = PLAYER1;
+            if (checkWin(board, r, c)) {
+              board[r][c] = null;
+              return -100000;
+            }
+            const score = minimax(board, depth - 1, alpha, beta, true);
+            board[r][c] = null;
+            minScore = Math.min(minScore, score);
+            beta = Math.min(beta, score);
+            if (beta <= alpha) break;
+          }
+        }
+      }
+      return minScore;
+    }
+  };
+  // Update the AI move logic in useEffect
   useEffect(() => {
     if (gameMode === '1P' && currentPlayer === PLAYER2 && !gameOver && !animating) {
-      // Add a small delay before AI move to make it feel more natural
       const timeout = setTimeout(() => {
-        // Find all valid columns (not full)
-        const validMoves = [];
+        let bestScore = -Infinity;
+        let bestMove = 0;
+        
         for (let c = 0; c < COLS; c++) {
-          if (board[0][c] === EMPTY) {
-            validMoves.push(c);
+          if (board[0][c] === null) {
+            let r = ROWS - 1;
+            while (r >= 0 && board[r][c] !== null) r--;
+            if (r >= 0) {
+              board[r][c] = PLAYER2;
+              const score = minimax(board, 5, -Infinity, Infinity, false);
+              board[r][c] = null;
+              if (score > bestScore) {
+                bestScore = score;
+                bestMove = c;
+              }
+            }
           }
         }
         
-        if (validMoves.length > 0) {
-          // Choose a random valid column
-          const randomCol = validMoves[Math.floor(Math.random() * validMoves.length)];
-          handleColumnClick(randomCol);
-        }
-      }, 1000);
+        handleColumnClick(bestMove);
+      }, 500);
       
       return () => clearTimeout(timeout);
     }
   }, [currentPlayer, gameMode, gameOver, animating]);
-
   return (
     <div className="min-h-screen bg-[#f7f7f7] p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
