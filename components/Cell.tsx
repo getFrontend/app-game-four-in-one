@@ -12,7 +12,7 @@ const Cell: React.FC<CellProps> = ({ rowIdx, colIdx, handleColumnClick, getAnima
   return (
     <div 
       key={`${rowIdx}-${colIdx}`} 
-      className="w-12 h-12 p-1 relative"
+      className="w-12 h-12 p-1 relative sm:m-1"
       onClick={() => handleColumnClick(colIdx)}
     >
       <div 
