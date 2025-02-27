@@ -28,7 +28,6 @@ const ConnectFour: React.FC = () => {
   function createEmptyBoard() {
     return Array(ROWS).fill(null).map(() => Array(COLS).fill(EMPTY));
   }
-
   // Handle column click
   const handleColumnClick = (colIndex: number) => {
     if (gameOver || animating) return;
@@ -96,12 +95,10 @@ const ConnectFour: React.FC = () => {
       setAnimating(false);
     }, 500); // Animation duration
   };
-
   // Check if board is full
   const isBoardFull = (board: (string | null)[][]) => {
     return board[0].every(cell => cell !== EMPTY);
   };
-
   // Reset game
   const resetGame = () => {
     setBoard(createEmptyBoard());
@@ -314,6 +311,49 @@ const ConnectFour: React.FC = () => {
     setCurrentPlayer(PLAYER1); // Always ensure human player (PLAYER1) goes first
     setBoard(createEmptyBoard());
   };
+  // Add new useEffect for AI vs AI mode
+  useEffect(() => {
+    if (gameMode === 'AI' && !gameOver && !animating) {
+      const timeout = setTimeout(() => {
+        let bestScore = -Infinity;
+        let bestMove = 0;
+        
+        for (let c = 0; c < COLS; c++) {
+          if (board[0][c] === null) {
+            let r = ROWS - 1;
+            while (r >= 0 && board[r][c] !== null) r--;
+            if (r >= 0) {
+              board[r][c] = currentPlayer;
+              const score = minimax(board, 5, -Infinity, Infinity, false);
+              board[r][c] = null;
+              if (score > bestScore) {
+                bestScore = score;
+                bestMove = c;
+              }
+            }
+          }
+        }
+        
+        handleColumnClick(bestMove);
+      }, 1000); // 1 second delay between moves
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [currentPlayer, gameMode, gameOver, animating, board]);
+  // Update Board text display
+  const getTurnText = () => {
+    if (gameMode === 'AI') {
+      return `AI ${currentPlayer === PLAYER1 ? '1' : '2'}'s turn`;
+    }
+    return `AI ${currentPlayer === PLAYER1 ? '1' : '2'}'s turn`;
+  };
+  // Update winning message
+  const getWinnerText = () => {
+    if (gameMode === 'AI') {
+      return `AI ${winner === PLAYER1 ? '1' : '2'} won!`;
+    }
+    return `AI ${winner === PLAYER1 ? '1' : '2'} won!`;
+  };
   return (
     <div className="min-h-screen bg-[#f7f7f7] p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
@@ -328,6 +368,8 @@ const ConnectFour: React.FC = () => {
             getAnimationStyle={getAnimationStyle}
             goToMenu={goToMenu}
             gameMode={gameMode}
+            getTurnText={getTurnText}
+            getWinnerText={getWinnerText}
           />
         ) : (
           <Menu setGameMode={handleGameModeSelect} />

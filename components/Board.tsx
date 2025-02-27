@@ -11,6 +11,8 @@ interface BoardProps {
   getAnimationStyle: (rowIdx: number, colIdx: number) => React.CSSProperties;
   goToMenu: () => void;
   gameMode: string | null;
+  getTurnText: () => string;
+  getWinnerText: () => string;
 }
 
 const Board: React.FC<BoardProps> = ({ 
@@ -22,29 +24,42 @@ const Board: React.FC<BoardProps> = ({
   handleColumnClick,
   getAnimationStyle,
   goToMenu,
-  gameMode 
+  gameMode,
+  getTurnText,
+  getWinnerText 
 }) => {
   const COLS = board[0].length;
   const EMPTY = null;
   const PLAYER1 = 'yellow';
-  const getTurnText = () => {
+  
+  const getDisplayText = () => {
+    if (winner) {
+      if (gameMode === '1P') {
+        return winner === PLAYER1 ? 'You won!' : 'AI won!';
+      } else if (gameMode === 'AI') {
+        return `AI ${winner === PLAYER1 ? '1' : '2'} won!`;
+      } else {
+        return `${winner === PLAYER1 ? 'Yellow' : 'Blue'} won!`;
+      }
+    }
+    
+    if (gameOver) {
+      return "It's a draw!";
+    }
+    
     if (gameMode === '1P') {
       return currentPlayer === PLAYER1 ? "Your turn" : "AI's turn";
+    } else if (gameMode === 'AI') {
+      return `AI ${currentPlayer === PLAYER1 ? '1' : '2'}'s turn`;
+    } else {
+      return `${currentPlayer === PLAYER1 ? 'Yellow' : 'Blue'}'s turn`;
     }
-    return `${currentPlayer === PLAYER1 ? 'Yellow' : 'Blue'}'s turn`;
   };
   
   return (
     <div className="flex flex-col items-center">
       <div className="text-2xl font-bold my-4">
-        {winner ? 
-          `${gameMode === '1P' ? 
-            (winner === PLAYER1 ? 'You' : 'AI') : 
-            (winner === PLAYER1 ? 'Yellow' : 'Blue')} won!` : 
-          gameOver ? 
-            "It's a draw!" : 
-            getTurnText()
-        }
+        {getDisplayText()}
       </div>
       
       <div className="bg-gray-500 p-4 rounded-lg shadow-lg">
@@ -91,5 +106,4 @@ const Board: React.FC<BoardProps> = ({
     </div>
   );
 };
-
 export default Board;
