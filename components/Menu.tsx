@@ -1,3 +1,5 @@
+import { logoImg } from '@/constants';
+import Image from 'next/image';
 import React from 'react';
 
 interface MenuProps {
@@ -7,7 +9,8 @@ interface MenuProps {
 const Menu: React.FC<MenuProps> = ({ setGameMode }) => {
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-4xl font-bold text-blue-500 mb-6">Connect Four</h1>
+      <Image src={logoImg} width={200} height={200} alt="Game logo" />
+      <h1 className="text-4xl font-bold text-blue-500 my-6">Connect Four</h1>
       <p className="text-xl text-gray-600 mb-8">Play against a friend or challenge the AI!</p>
       
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">

@@ -37,11 +37,11 @@ const Board: React.FC<BoardProps> = ({
         }
       </div>
       
-      <div className="bg-blue-500 p-4 rounded-lg shadow-lg">
+      <div className="bg-gray-500 p-4 rounded-lg shadow-lg">
         {/* Column indicators */}
-        <div className="flex justify-between mb-2">
+        <div className="flex justify-around sm:justify-between mb-2">
           {Array(COLS).fill(null).map((_, i) => (
-            <div key={i} className="w-14 flex justify-center">
+            <div key={i} className="w-10 sm:w-14 flex justify-center">
               <button 
                 className="text-blue-200 hover:text-white cursor-pointer"
                 onClick={() => handleColumnClick(i)}
@@ -54,9 +54,9 @@ const Board: React.FC<BoardProps> = ({
         </div>
         
         {/* Game board */}
-        <div className="bg-blue-500 relative">
+        <div className="bg-gray-500 relative">
           {board.map((row, rowIdx) => (
-            <div key={rowIdx} className="flex sm:gap-4">
+            <div key={rowIdx} className="flex sm:gap-3">
               {row.map((cell, colIdx) => (
                 <Cell 
                   key={`${rowIdx}-${colIdx}`}

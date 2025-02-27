@@ -8,8 +8,8 @@ const ConnectFour: React.FC = () => {
   const ROWS = 6;
   const COLS = 7;
   const EMPTY = null;
-  const PLAYER1 = 'red';
-  const PLAYER2 = 'yellow';
+  const PLAYER1 = 'yellow';
+  const PLAYER2 = 'red';
 
   const [board, setBoard] = useState<(string | null)[][]>(createEmptyBoard());
   const [currentPlayer, setCurrentPlayer] = useState<string>(PLAYER1);
@@ -168,7 +168,7 @@ const ConnectFour: React.FC = () => {
         // This is our animated piece at the top
         const dropDistance = dropAnimation.row ? dropAnimation.row * 48 : 0; // 48px per cell
         return {
-          backgroundColor: dropAnimation.player === PLAYER1 ? '#e53e3e' : '#ecc94b',
+          backgroundColor: dropAnimation.player === PLAYER1 ? '#fca000' : '#1f84c4',
           transform: `translateY(${dropDistance}px)`,
           transition: 'transform 500ms cubic-bezier(0.70, 0.05, 0.95, 0.90)',
           zIndex: 10
@@ -182,8 +182,8 @@ const ConnectFour: React.FC = () => {
     // Normal cells
     return {
       backgroundColor: 
-        board[rowIdx][colIdx] === PLAYER1 ? '#e53e3e' : 
-        board[rowIdx][colIdx] === PLAYER2 ? '#ecc94b' : 
+        board[rowIdx][colIdx] === PLAYER1 ? '#fca000' : 
+        board[rowIdx][colIdx] === PLAYER2 ? '#1f84c4' : 
         'white',
       transition: 'background-color 300ms',
     };
@@ -214,7 +214,7 @@ const ConnectFour: React.FC = () => {
   }, [currentPlayer, gameMode, gameOver, animating]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-[#f7f7f7] p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         {gameMode ? (
           <Board 

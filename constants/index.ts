@@ -1,0 +1,1 @@
+export const logoImg = "/assets/images/4in1_logo.png";
