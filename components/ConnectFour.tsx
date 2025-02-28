@@ -297,6 +297,41 @@ const ConnectFour: React.FC = () => {
         let bestScore = -Infinity;
         let bestMove = 0;
         
+        // First check for winning moves
+        for (let c = 0; c < COLS; c++) {
+          if (board[0][c] === null) {
+            let r = ROWS - 1;
+            while (r >= 0 && board[r][c] !== null) r--;
+            if (r >= 0) {
+              board[r][c] = PLAYER2;
+              if (checkWin(board, r, c)) {
+                board[r][c] = null;
+                handleColumnClick(c);
+                return;
+              }
+              board[r][c] = null;
+            }
+          }
+        }
+        
+        // Then check for blocking opponent's winning moves
+        for (let c = 0; c < COLS; c++) {
+          if (board[0][c] === null) {
+            let r = ROWS - 1;
+            while (r >= 0 && board[r][c] !== null) r--;
+            if (r >= 0) {
+              board[r][c] = PLAYER1;
+              if (checkWin(board, r, c)) {
+                board[r][c] = null;
+                handleColumnClick(c);
+                return;
+              }
+              board[r][c] = null;
+            }
+          }
+        }
+        
+        // Otherwise use minimax
         for (let c = 0; c < COLS; c++) {
           if (board[0][c] === null) {
             let r = ROWS - 1;
@@ -318,7 +353,7 @@ const ConnectFour: React.FC = () => {
       
       return () => clearTimeout(timeout);
     }
-  }, [currentPlayer, gameMode, gameOver, animating]);
+  }, [currentPlayer, gameMode, gameOver, animating, board]);
   // Update the setGameMode handling in Menu click
   const handleGameModeSelect = (mode: string) => {
     setGameMode(mode);
@@ -332,6 +367,45 @@ const ConnectFour: React.FC = () => {
         let bestScore = -Infinity;
         let bestMove = 0;
         
+        // First check for winning moves
+        for (let c = 0; c < COLS; c++) {
+          if (board[0][c] === null) {
+            let r = ROWS - 1;
+            while (r >= 0 && board[r][c] !== null) r--;
+            if (r >= 0) {
+              board[r][c] = currentPlayer;
+              if (checkWin(board, r, c)) {
+                board[r][c] = null;
+                handleColumnClick(c);
+                return;
+              }
+              board[r][c] = null;
+            }
+          }
+        }
+        
+        // Then check for blocking opponent's winning moves
+        const opponent = currentPlayer === PLAYER1 ? PLAYER2 : PLAYER1;
+        for (let c = 0; c < COLS; c++) {
+          if (board[0][c] === null) {
+            let r = ROWS - 1;
+            while (r >= 0 && board[r][c] !== null) r--;
+            if (r >= 0) {
+              board[r][c] = opponent;
+              if (checkWin(board, r, c)) {
+                board[r][c] = null;
+                handleColumnClick(c);
+                return;
+              }
+              board[r][c] = null;
+            }
+          }
+        }
+        
+        // Otherwise use minimax with some randomness
+        const validMoves: number[] = [];
+        const scores: number[] = [];
+        
         for (let c = 0; c < COLS; c++) {
           if (board[0][c] === null) {
             let r = ROWS - 1;
@@ -340,11 +414,29 @@ const ConnectFour: React.FC = () => {
               board[r][c] = currentPlayer;
               const score = minimax(board, 5, -Infinity, Infinity, false);
               board[r][c] = null;
+              validMoves.push(c);
+              scores.push(score);
+              
               if (score > bestScore) {
                 bestScore = score;
                 bestMove = c;
               }
             }
+          }
+        }
+        
+        // Add some randomness to avoid repetitive play
+        if (validMoves.length > 1) {
+          const sortedIndices = scores.map((score, idx) => ({score, idx}))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, Math.min(3, validMoves.length))
+            .map(item => item.idx);
+          
+          if (Math.random() > 0.3 || sortedIndices.length === 1) {
+            bestMove = validMoves[sortedIndices[0]];
+          } else {
+            const randomIndex = Math.floor(Math.random() * (sortedIndices.length - 1)) + 1;
+            bestMove = validMoves[sortedIndices[randomIndex]];
           }
         }
         
