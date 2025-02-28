@@ -16,7 +16,7 @@ const Cell: React.FC<CellProps> = ({ rowIdx, colIdx, handleColumnClick, getAnima
       onClick={() => handleColumnClick(colIdx)}
     >
       <div 
-        className="w-full h-full rounded-full absolute"
+        className="w-full h-full rounded-full absolute cursor-pointer"
         style={getAnimationStyle(rowIdx, colIdx)}
       />
     </div>
