@@ -108,7 +108,7 @@ const Board: React.FC<BoardProps> = ({
           {Array(COLS).fill(null).map((_, i) => (
             <div key={i} className="w-10 sm:w-14 flex justify-center">
               <button 
-                className="text-blue-200 hover:text-white cursor-pointer"
+                className="text-3xl text-blue-200 hover:text-blue-400 cursor-pointer"
                 onClick={() => handleColumnClick(i)}
                 disabled={gameOver || animating || board[0][i] !== EMPTY}
               >
@@ -138,7 +138,7 @@ const Board: React.FC<BoardProps> = ({
       </div>
       
       <button 
-        className="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded"
+        className="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded cursor-pointer"
         onClick={goToMenu}
       >
         Back to Menu
