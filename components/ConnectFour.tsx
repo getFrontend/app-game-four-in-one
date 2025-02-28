@@ -162,7 +162,10 @@ const ConnectFour: React.FC = () => {
         // This is our animated piece at the top
         const dropDistance = dropAnimation.row ? dropAnimation.row * 48 : 0; // 48px per cell
         return {
-          backgroundColor: dropAnimation.player === PLAYER1 ? '#fca000' : '#1f84c4',
+          backgroundImage: dropAnimation.player === PLAYER1 ? 
+            'url(/assets/images/yellow-chip.png)' : 
+            'url(/assets/images/blue-chip.png)',
+          backgroundSize: 'cover',
           transform: `translateY(${dropDistance}px)`,
           transition: 'transform 500ms cubic-bezier(0.70, 0.05, 0.95, 0.90)',
           zIndex: 10
@@ -174,12 +177,23 @@ const ConnectFour: React.FC = () => {
     }
     
     // Normal cells
+    if (board[rowIdx][colIdx] === PLAYER1) {
+      return {
+        backgroundImage: 'url(/assets/images/yellow-chip.png)',
+        backgroundSize: 'cover',
+        transition: 'all 300ms'
+      };
+    } else if (board[rowIdx][colIdx] === PLAYER2) {
+      return {
+        backgroundImage: 'url(/assets/images/blue-chip.png)',
+        backgroundSize: 'cover',
+        transition: 'all 300ms'
+      };
+    }
+    
     return {
-      backgroundColor: 
-        board[rowIdx][colIdx] === PLAYER1 ? '#fca000' : 
-        board[rowIdx][colIdx] === PLAYER2 ? '#1f84c4' : 
-        'white',
-      transition: 'background-color 300ms',
+      backgroundColor: 'white',
+      transition: 'all 300ms'
     };
   };
   // Add evaluation function for board positions
@@ -342,17 +356,23 @@ const ConnectFour: React.FC = () => {
   }, [currentPlayer, gameMode, gameOver, animating, board]);
   // Update Board text display
   const getTurnText = () => {
-    if (gameMode === 'AI') {
+    if (gameMode === '1P') {
+      return currentPlayer === PLAYER1 ? "Your turn" : "AI's turn";
+    } else if (gameMode === 'AI') {
       return `AI ${currentPlayer === PLAYER1 ? '1' : '2'}'s turn`;
+    } else {
+      return `${currentPlayer === PLAYER1 ? 'Yellow' : 'Blue'}'s turn`;
     }
-    return `AI ${currentPlayer === PLAYER1 ? '1' : '2'}'s turn`;
   };
   // Update winning message
   const getWinnerText = () => {
-    if (gameMode === 'AI') {
+    if (gameMode === '1P') {
+      return winner === PLAYER1 ? 'You won!' : 'AI won!';
+    } else if (gameMode === 'AI') {
       return `AI ${winner === PLAYER1 ? '1' : '2'} won!`;
+    } else {
+      return `${winner === PLAYER1 ? 'Yellow' : 'Blue'} won!`;
     }
-    return `AI ${winner === PLAYER1 ? '1' : '2'} won!`;
   };
   return (
     <div className="min-h-screen bg-[#f7f7f7] p-4 sm:p-6">
