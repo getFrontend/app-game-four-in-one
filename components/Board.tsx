@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
+import dynamic from 'next/dynamic';
+
+// Dynamically import Confetti to avoid SSR issues
+const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
 
 interface BoardProps {
   board: (string | null)[][];
@@ -56,8 +60,44 @@ const Board: React.FC<BoardProps> = ({
     }
   };
   
+  const [windowDimension, setWindowDimension] = useState({ width: 0, height: 0 });
+  const [showConfetti, setShowConfetti] = useState(false);
+  
+  useEffect(() => {
+    // Set window dimensions for confetti
+    setWindowDimension({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+    
+    // Show confetti when there's a winner
+    if (winner) {
+      setShowConfetti(true);
+      
+      // Stop confetti after 5 seconds
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [winner]);
+  
   return (
     <div className="flex flex-col items-center">
+      {showConfetti && (
+        <Confetti
+          width={windowDimension.width}
+          height={windowDimension.height}
+          recycle={false}
+          numberOfPieces={500}
+          gravity={0.2}
+          colors={winner === PLAYER1 ? 
+            ['#fca000', '#fcb500', '#fcc800', '#fcd700'] : 
+            ['#1f84c4', '#2294d4', '#25a4e4', '#28b4f4']}
+        />
+      )}
+      
       <div className="text-2xl font-bold my-4">
         {getDisplayText()}
       </div>
@@ -106,4 +146,5 @@ const Board: React.FC<BoardProps> = ({
     </div>
   );
 };
+
 export default Board;
